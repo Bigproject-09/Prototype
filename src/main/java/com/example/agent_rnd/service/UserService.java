@@ -27,6 +27,8 @@ public class UserService {
     private final PlanRepository planRepository;
     private final DraftRepository draftRepository;
     private final ProposalRepository proposalRepository;
+
+    private final BusinessVerifyClient businessVerifyClient;
     //private final PasswordEncoder passwordEncoder;
 
     // =========================
@@ -51,54 +53,69 @@ public class UserService {
     public SignupResult companySignupAndCreateAdmin(
             String companyName,
             String businessRegNo,
+            String openDate,
+            String ceoName,
             String adminEmail,
             String password,
             String passwordConfirm,
             Integer planId
     ) {
-        // 1) 회사 사업자번호 중복 방지
-        if (companyRepository.findByBusinessRegNo(businessRegNo).isPresent()) {
+        // 0) 입력 정리 (국세청 요구사항: b_no=10자리 숫자, start_dt=YYYYMMDD) :contentReference[oaicite:3]{index=3}
+        String bno = businessRegNo == null ? "" : businessRegNo.replaceAll("[^0-9]", "");
+        String startDt = openDate == null ? "" : openDate.replaceAll("[^0-9]", ""); // "2026-01-20" -> "20260120"
+        String pnm = ceoName == null ? "" : ceoName.trim();
+
+        if (bno.length() != 10) throw new IllegalArgumentException("사업자등록번호는 숫자 10자리여야 합니다. '-' 제거해서 보내세요.");
+        if (startDt.length() != 8) throw new IllegalArgumentException("개업일자는 YYYYMMDD 형식이어야 합니다.");
+        if (pnm.isBlank()) throw new IllegalArgumentException("대표자명(ceoName)은 필수입니다.");
+
+        // 1) (A안) 여기서 진위확인 먼저
+        var verifyRes = businessVerifyClient.validate(bno, startDt, pnm);
+
+        if (verifyRes == null || verifyRes.data() == null || verifyRes.data().isEmpty()) {
+            throw new IllegalArgumentException("사업자 진위확인 응답이 비정상입니다.");
+        }
+        var item = verifyRes.data().get(0);
+        if (!"01".equals(item.valid())) {
+            // valid=02면 "확인할 수 없습니다"가 올 수 있음 :contentReference[oaicite:4]{index=4}
+            throw new IllegalArgumentException("사업자 진위확인 실패: " + (item.valid_msg() == null ? "" : item.valid_msg()));
+        }
+
+        // 2) 회사 사업자번호 중복 방지
+        if (companyRepository.findByBusinessRegNo(bno).isPresent()) {
             throw new IllegalArgumentException("이미 등록된 사업자등록번호입니다.");
         }
 
-        // 2) 관리자 이메일 중복 방지
+        // 3) 관리자 이메일 중복 방지
         if (userRepository.existsByEmail(adminEmail)) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        // 3) 비밀번호 확인
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("비밀번호는 필수입니다.");
-        }
-        if (!password.equals(passwordConfirm)) {
-            throw new IllegalArgumentException("비밀번호 확인이 일치하지 않습니다.");
-        }
+        // 4) 비밀번호 확인
+        if (password == null || password.isBlank()) throw new IllegalArgumentException("비밀번호는 필수입니다.");
+        if (!password.equals(passwordConfirm)) throw new IllegalArgumentException("비밀번호 확인이 일치하지 않습니다.");
 
-        // 4) Plan 필수 (users.plan_id NOT NULL)
+        // 5) Plan
         int resolvedPlanId = (planId == null) ? 1 : planId;
         Plan plan = planRepository.findById(resolvedPlanId)
                 .orElseThrow(() -> new IllegalArgumentException("플랜이 존재하지 않습니다. planId=" + resolvedPlanId));
 
-        // 5) company_id 채번 (AUTO_INCREMENT 없음)
+        // 6) company/user 생성(기존 로직 그대로)
         Long nextCompanyId = companyRepository.findMaxId() + 1;
-
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime end = now.plusYears(1);
 
         Company company = new Company(
                 nextCompanyId,
                 companyName,
-                businessRegNo,
+                bno,
                 ContractStatus.PENDING,
                 now,
                 end
         );
         companyRepository.save(company);
 
-        // 6) user_id 채번 (AUTO_INCREMENT 없음)
         Long nextUserId = userRepository.findMaxId() + 1;
-
-        // 7) 비밀번호 저장 (지금은 SHA-256로 임시, 나중에 BCrypt로 교체)
         String encoded = sha256(password);
 
         User admin = new User(
@@ -116,6 +133,7 @@ public class UserService {
 
         return new SignupResult(company.getId(), admin.getId());
     }
+
 
     // ============================================
     // 4) 1단계: 관리자 -> 사용자 여러 명 생성

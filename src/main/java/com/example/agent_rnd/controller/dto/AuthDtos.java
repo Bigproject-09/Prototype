@@ -5,6 +5,8 @@ public class AuthDtos {
     public record CompanySignupRequest(
             String companyName,
             String businessRegNo,
+            String openDate,
+            String ceoName,
             String adminEmail,
             String password,
             String passwordConfirm,

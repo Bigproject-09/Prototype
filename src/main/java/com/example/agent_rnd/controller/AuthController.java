@@ -17,6 +17,8 @@ public class AuthController {
         var r = userService.companySignupAndCreateAdmin(
                 req.companyName(),
                 req.businessRegNo(),
+                req.openDate(),
+                req.ceoName(),
                 req.adminEmail(),
                 req.password(),
                 req.passwordConfirm(),
@@ -24,4 +26,5 @@ public class AuthController {
         );
         return new AuthDtos.CompanySignupResponse(r.companyId(), r.adminUserId());
     }
+
 }
