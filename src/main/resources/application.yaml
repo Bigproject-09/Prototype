@@ -22,3 +22,7 @@ spring:
         format_sql: true
         # MySQL 8.0 이상이므로 최신 방언으로 수정 (HHH90000026 경고 해결)
         dialect: org.hibernate.dialect.MySQLDialect
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
