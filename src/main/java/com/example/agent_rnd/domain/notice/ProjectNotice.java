@@ -7,54 +7,54 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "PROJECT_NOTICES")
+@Table(name = "project_notices") // [수정] SQL 스크립트의 소문자 테이블명 반영
 public class ProjectNotice {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
     private Long id;
 
-    @Column(name = "seq", length = 100)
-    private String seq;
-
-    @Column(name = "title", length = 500, nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "link", length = 1000)
+    @Column(name = "link", columnDefinition = "TEXT")
     private String url;
 
-    @Column(name = "author", length = 100)
+    @Column(name = "seq", length = 50)
+    private String seq;
+
+    @Column(name = "author")
     private String author;
 
-    // [중요] DB 컬럼명이 CamelCase
-    @Column(name = "excInsttNm", length = 100)
+    // [확정] CamelCase 유지
+    @Column(name = "excInsttNm")
     private String agency;
 
     @Lob
     @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
-    // [중요] DB 컬럼명이 CamelCase
-    @Column(name = "pubDate", length = 50)
+    // [확정] CamelCase 유지
+    @Column(name = "pubDate", length = 100)
     private String pubDate;
 
-    // [중요] DB 컬럼명이 CamelCase
-    @Column(name = "reqstDt", length = 100)
+    // [확정] CamelCase 유지
+    @Column(name = "reqstDt")
     private String requestPeriod;
 
-    // [중요] DB 컬럼명이 CamelCase
-    @Column(name = "trgetNm", length = 200)
+    // [확정] CamelCase 유지
+    @Column(name = "trgetNm", columnDefinition = "TEXT")
     private String targetName;
 
-    // [중요] DB 컬럼명이 CamelCase
+    // [확정] CamelCase 유지
     @Column(name = "printFlpthNm", columnDefinition = "TEXT")
     private String filePath;
 
-    // [중요] DB 컬럼명이 CamelCase
+    // [확정] CamelCase 유지
     @Column(name = "printFileNm", columnDefinition = "TEXT")
     private String fileName;
 
-    // [중요] DB 컬럼명이 CamelCase
+    // [확정] CamelCase 유지
     @Column(name = "hashTags", columnDefinition = "TEXT")
     private String hashTags;
 }

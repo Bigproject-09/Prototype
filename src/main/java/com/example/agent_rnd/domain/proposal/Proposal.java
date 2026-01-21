@@ -1,11 +1,12 @@
 package com.example.agent_rnd.domain.proposal;
 
-import com.example.agent_rnd.domain.user.User;
 import com.example.agent_rnd.domain.notice.ProjectNotice;
 import com.example.agent_rnd.domain.template.ProposalTemplate;
+import com.example.agent_rnd.domain.user.User;
 import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -33,7 +34,7 @@ public class Proposal {
     private String title;
 
     @Lob
-    @Column(name = "final_content", columnDefinition = "LONGTEXT")
+    @Column(name = "final_content", columnDefinition = "LONGTEXT", nullable = false)
     private String finalContent;
 
     @Column(length = 20)
@@ -42,7 +43,4 @@ public class Proposal {
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private ProposalStatus status;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 }

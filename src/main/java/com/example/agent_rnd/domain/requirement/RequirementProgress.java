@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 public class RequirementProgress {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // [중요] DB 스키마의 오타(propress_id) 반영
-    @Column(name = "propress_id")
+    @Column(name = "progress_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
