@@ -12,15 +12,12 @@ public class UserController {
 
     private final UserService userService;
 
-    // 1. 이메일 중복 확인
-    // 사용법: /api/users/check-email?email=test@test.com
+    // 이 내용들이 살아있어야 합니다!
     @GetMapping("/check-email")
     public boolean checkEmail(@RequestParam String email) {
         return userService.checkEmailDuplicate(email);
     }
 
-    // 2. 회원 정보 조회 (테스트용)
-    // 사용법: /api/users/1
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         return userService.getUser(id);

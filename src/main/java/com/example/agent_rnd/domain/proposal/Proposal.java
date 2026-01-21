@@ -1,15 +1,15 @@
 package com.example.agent_rnd.domain.proposal;
 
+import com.example.agent_rnd.domain.user.User;
 import com.example.agent_rnd.domain.notice.ProjectNotice;
 import com.example.agent_rnd.domain.template.ProposalTemplate;
-import com.example.agent_rnd.domain.user.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder // [추가] 빌더 패턴 활성화
+@AllArgsConstructor(access = AccessLevel.PRIVATE) // [추가] 빌더 사용 시 필수
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "PROPOSALS")
 public class Proposal {

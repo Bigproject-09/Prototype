@@ -1,7 +1,8 @@
 package com.example.agent_rnd.domain.proposal;
 
 public enum ProposalStatus {
-    DRAFT,      // 작성 중 (임시 저장)
-    COMPLETED,  // 생성 완료
-    FAILED      // 생성 실패
+    WRITING,    // [추가] 작성 중 (AI 생성 중 포함)
+    DRAFT,      // 초안 완료
+    COMPLETED,  // 최종 완료
+    FAILED      // 실패
 }
