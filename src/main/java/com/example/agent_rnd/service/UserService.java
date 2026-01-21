@@ -138,6 +138,7 @@ public class UserService {
     // ============================================
     // 4) 1단계: 관리자 -> 사용자 여러 명 생성
     // ============================================
+
     @Transactional
     public List<CreatedUser> adminCreateUsers(
             Long companyId,
