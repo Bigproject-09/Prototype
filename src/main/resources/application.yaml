@@ -1,17 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # 내 컴퓨터(로컬) DB 연결
-    url: jdbc:mysql://localhost:3306/RanDi?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/testschema?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: aivle
 
   jpa:
     hibernate:
-      # DB와 엔티티 구조가 일치하는지 검사만 수행
       ddl-auto: validate
-
-      # [중요] 자바 필드명 대소문자 그대로 DB 컬럼명을 찾게 하는 설정
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
@@ -20,5 +16,4 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        # MySQL 8.0 이상이므로 최신 방언으로 수정 (HHH90000026 경고 해결)
         dialect: org.hibernate.dialect.MySQLDialect

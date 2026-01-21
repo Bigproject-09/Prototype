@@ -1,4 +1,5 @@
-package com.example.agent_rnd.controller;
+package com.example.agent_rnd.controller.api.users;
+
 
 import com.example.agent_rnd.domain.user.User;
 import com.example.agent_rnd.service.UserService;

@@ -1,4 +1,4 @@
-package com.example.agent_rnd.controller;
+package com.example.agent_rnd.controller.api.notices;
 
 import com.example.agent_rnd.domain.notice.ProjectNotice;
 import com.example.agent_rnd.service.ProjectNoticeService;

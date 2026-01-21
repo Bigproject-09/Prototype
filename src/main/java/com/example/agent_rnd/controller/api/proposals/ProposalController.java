@@ -1,4 +1,5 @@
-package com.example.agent_rnd.controller;
+package com.example.agent_rnd.controller.api.proposals;
+
 
 import com.example.agent_rnd.domain.proposal.Proposal;
 import com.example.agent_rnd.service.ProposalService;
