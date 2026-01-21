@@ -1,31 +1,40 @@
 package com.example.agent_rnd.domain.template;
 
+import com.example.agent_rnd.domain.user.User;
+import com.example.agent_rnd.domain.notice.ProjectNotice;
 import jakarta.persistence.*;
 import lombok.Getter;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "PROPOSAL_TEMPLATES")
-public class ProposalTemplate { // 상속(BaseTimeEntity)은 이미 제거된 상태여야 합니다.
+public class ProposalTemplate {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "template_id")
     private Long id;
 
-    // [수정] DB의 file_name 컬럼과 매핑
-    @Column(name = "file_name")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice_id", nullable = false)
+    private ProjectNotice projectNotice;
+
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    // [수정] DB의 file_path 컬럼과 매핑
-    @Column(name = "file_path")
+    @Column(name = "file_path", nullable = false, length = 500)
     private String filePath;
 
-    // [수정] DB의 structure_json 컬럼과 매핑
-    @Column(name = "structure_json", columnDefinition = "JSON")
+    // JSON 타입은 String으로 매핑
+    @Column(name = "structure_json", columnDefinition = "JSON", nullable = false)
     private String structureJson;
 
-    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL)
-    private List<TemplateQuestion> questions = new ArrayList<>();
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

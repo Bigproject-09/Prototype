@@ -7,52 +7,54 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "project_notices")
+@Table(name = "PROJECT_NOTICES")
 public class ProjectNotice {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
     private Long id;
 
-    @Column(name = "seq")
+    @Column(name = "seq", length = 100)
     private String seq;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", length = 500, nullable = false)
     private String title;
 
-    @Column(name = "link", columnDefinition = "TEXT")
+    @Column(name = "link", length = 1000)
     private String url;
 
-    @Column(name = "author")
+    @Column(name = "author", length = 100)
     private String author;
 
-    // [수정] DB의 컬럼명인 excInsttNm과 정확히 일치시킵니다.
-    @Column(name = "excInsttNm")
+    // [중요] DB 컬럼명이 CamelCase
+    @Column(name = "excInsttNm", length = 100)
     private String agency;
 
     @Lob
     @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
 
-    @Column(name = "pubDate")
+    // [중요] DB 컬럼명이 CamelCase
+    @Column(name = "pubDate", length = 50)
     private String pubDate;
 
-    // [수정] 다른 카멜케이스 컬럼들도 안전하게 name을 명시합니다.
-    @Column(name = "reqstDt")
+    // [중요] DB 컬럼명이 CamelCase
+    @Column(name = "reqstDt", length = 100)
     private String requestPeriod;
 
-    @Column(name = "trgetNm", columnDefinition = "TEXT")
+    // [중요] DB 컬럼명이 CamelCase
+    @Column(name = "trgetNm", length = 200)
     private String targetName;
 
+    // [중요] DB 컬럼명이 CamelCase
     @Column(name = "printFlpthNm", columnDefinition = "TEXT")
     private String filePath;
 
+    // [중요] DB 컬럼명이 CamelCase
     @Column(name = "printFileNm", columnDefinition = "TEXT")
     private String fileName;
 
+    // [중요] DB 컬럼명이 CamelCase
     @Column(name = "hashTags", columnDefinition = "TEXT")
     private String hashTags;
-
-    @Transient
-    public String getStatus() { return "OPEN"; }
 }
