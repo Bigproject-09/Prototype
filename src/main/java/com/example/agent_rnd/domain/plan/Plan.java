@@ -1,30 +1,28 @@
 package com.example.agent_rnd.domain.plan;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Getter
-@NoArgsConstructor
-@Table(name = "plans")
+@Table(name = "PLANS")
 public class Plan {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_id")
-    private Integer id;
+    private Integer planId;
 
-    @Column(name = "plan_name", length = 50, nullable = false)
+    @Column(name = "plan_name", nullable = false, length = 50)
     private String planName;
 
-    @Column(precision = 10, scale = 2, nullable = false)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    // [수정 완료] DB 오타를 수정
     @Column(name = "is_downloadable", nullable = false)
-    private Boolean isDownloadable;
+    private boolean isDownloadable;
 
     @Column(name = "preview_page")
-    private Integer previewPageLimit;
+    private Integer previewPage;
+
+    protected Plan() {}
 }

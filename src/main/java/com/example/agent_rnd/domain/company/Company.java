@@ -1,47 +1,42 @@
 package com.example.agent_rnd.domain.company;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@NoArgsConstructor
-@Table(name = "companies")
+@Table(name = "COMPANIES")
 public class Company {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "company_id")
-    private Long id;
+    private Long companyId;
 
-    @Column(name = "company_name", length = 100, nullable = false)
-    private String name;
+    @Column(name = "company_name", nullable = false, length = 100)
+    private String companyName;
 
-    @Column(name = "business_reg_no", length = 20, nullable = false)
+    @Column(name = "business_reg_no", nullable = false, length = 20, unique = true)
     private String businessRegNo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "contract_status", length = 20)
-    private ContractStatus contractStatus;
+    @Column(name = "contract_status", nullable = false, length = 20)
+    private String contractStatus; // ACTIVE / EXPIRED
 
-    // [수정] DB 컬럼명인 start_date와 매핑
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
 
-    // [수정] DB 컬럼명인 end_date와 매핑
-    @Column(name = "end_date")
+    @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 
-    public Company(Long id, String name, String businessRegNo,
-                   ContractStatus contractStatus,
-                   LocalDateTime startDate, LocalDateTime endDate) {
-        this.id = id;
-        this.name = name;
-        this.businessRegNo = businessRegNo;
-        this.contractStatus = contractStatus;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
+    protected Company() {}
 
+    public static Company create(String companyName, String businessRegNo,
+                                 LocalDateTime startDate, LocalDateTime endDate) {
+        Company c = new Company();
+        c.companyName = companyName;
+        c.businessRegNo = businessRegNo;
+        c.contractStatus = "ACTIVE";
+        c.startDate = startDate;
+        c.endDate = endDate;
+        return c;
+    }
 }

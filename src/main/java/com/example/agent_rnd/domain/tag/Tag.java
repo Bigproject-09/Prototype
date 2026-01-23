@@ -1,21 +1,29 @@
 package com.example.agent_rnd.domain.tag;
 
 import jakarta.persistence.*;
-import lombok.Getter;
 
 @Entity
-@Getter
 @Table(name = "TAGS")
 public class Tag {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
-    private Long id;
+    private Long tagId;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    private TagCategory category; // REGION, SECTOR, BUSINESS
+    @Column(nullable = false, length = 50)
+    private TagCategory category;
 
-    @Column(length = 100)
-    private String name; // "서울", "금융", "2026 예비창업패키지..."
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    protected Tag() {}
+
+    public static Tag create(TagCategory category, String name) {
+        Tag t = new Tag();
+        t.category = category;
+        t.name = name;
+        return t;
+    }
 }
