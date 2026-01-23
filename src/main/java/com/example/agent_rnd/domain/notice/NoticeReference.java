@@ -1,8 +1,8 @@
 package com.example.agent_rnd.domain.notice;
 
+import com.example.agent_rnd.domain.enums.ReferenceType;
 import jakarta.persistence.*;
 import lombok.*;
-import com.example.agent_rnd.domain.enums.ReferenceType;
 
 @Entity
 @Table(name = "NOTICE_REFERENCES")
@@ -16,11 +16,11 @@ public class NoticeReference {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reference_id")
-    private Long referenceId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
-    private ProjectNotice noticeId;
+    private ProjectNotice notice;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 20)

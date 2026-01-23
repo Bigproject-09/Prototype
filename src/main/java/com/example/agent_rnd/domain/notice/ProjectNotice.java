@@ -9,8 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "PROJECT_NOTICES")
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class ProjectNotice {
@@ -33,16 +32,16 @@ public class ProjectNotice {
     private String author;
 
     @Column(name = "exc_instt_nm", nullable = false, length = 100)
-    private String etcInsttNm;
+    private String excInsttNm;
 
     @Column(name = "description", columnDefinition = "LONGTEXT")
-    private String description; // ERD: NULL 허용
+    private String description; // NULL 허용
 
     @Column(name = "pub_date", nullable = false, length = 50)
     private String pubDate;
 
     @Column(name = "reqst_dt", length = 100)
-    private String reqstDt; // ERD: NULL 허용
+    private String reqstDt; // NULL 허용
 
     @Column(name = "trget_nm", nullable = false, length = 200)
     private String trgetNm;
@@ -56,7 +55,7 @@ public class ProjectNotice {
     @Column(name = "hash_tags", nullable = false, length = 500)
     private String hashTags;
 
-    // ===== relations =====
+    // ===== relations (mappedBy는 "자식의 필드명") =====
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -70,20 +69,20 @@ public class ProjectNotice {
     @Builder.Default
     private List<NoticeReference> references = new ArrayList<>();
 
-    // ===== 편의 메서드 =====
+    // ===== 편의 메서드(양방향 세팅) =====
 
     public void addAttachment(NoticeAttachment attachment) {
         attachments.add(attachment);
-        attachment.setNoticeId(this);
+        attachment.setNotice(this);
     }
 
     public void addChecklistItem(ChecklistItem item) {
         checklistItems.add(item);
-        item.setNoticeId(this);
+        item.setNotice(this);
     }
 
     public void addReference(NoticeReference ref) {
         references.add(ref);
-        ref.setNoticeId(this);
+        ref.setNotice(this);
     }
 }

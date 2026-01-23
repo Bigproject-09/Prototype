@@ -19,30 +19,29 @@ public class NoticeAttachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attachment_id")
-    private Long attachmentId;
+    private Long id;
 
+    // ★ mappedBy="notice" 와 맞춰서 필드명은 notice
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
-    private ProjectNotice noticeId;
+    private ProjectNotice notice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
 
-    // ERD: "파일명/경로" 역할 (샘플에 경로처럼 들어가도 컬럼명은 original_name)
+    // ERD: original_name(또는 origin_name) — 지금 DB가 origin_name이면 그대로 유지
     @Column(name = "origin_name", nullable = false, length = 255)
     private String originName;
 
-    // MySQL JSON 컬럼
     @Column(name = "parsed_json", columnDefinition = "json")
-    private String parsedJson; // ERD: NULL 허용
+    private String parsedJson; // NULL 허용
 
-    // WAIT, PROCESSING, DONE, FAILED (enum 안 만들고 문자열로 맞춤)
     @Column(name = "parse_status", nullable = false, length = 20)
-    private String parseStatus;
+    private String parseStatus; // WAIT, PROCESSING, DONE, FAILED
 
     @Column(name = "error_msg", columnDefinition = "TEXT")
-    private String errorMsg; // ERD 상 실패시에만 존재하는 게 자연스러워서 NULL 허용
+    private String errorMsg; // NULL 허용
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

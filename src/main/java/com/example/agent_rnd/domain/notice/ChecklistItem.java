@@ -1,8 +1,8 @@
 package com.example.agent_rnd.domain.notice;
 
+import com.example.agent_rnd.domain.enums.ChecklistType;
 import jakarta.persistence.*;
 import lombok.*;
-import com.example.agent_rnd.domain.enums.ChecklistType;
 
 @Entity
 @Table(name = "CHECKLISTS")
@@ -16,11 +16,12 @@ public class ChecklistItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "checklist_id")
-    private Long checklistId;
+    private Long id;
 
+    // ★ mappedBy="notice" 와 맞춰서 필드명은 notice
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
-    private ProjectNotice noticeId;
+    private ProjectNotice notice;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 30)
