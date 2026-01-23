@@ -19,19 +19,19 @@ public class NoticeAttachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attachment_id")
-    private Long id;
+    private Long attachmentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
-    private ProjectNotice notice;
+    private ProjectNotice noticeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User userId;
 
     // ERD: "파일명/경로" 역할 (샘플에 경로처럼 들어가도 컬럼명은 original_name)
-    @Column(name = "original_name", nullable = false, length = 255)
-    private String originalName;
+    @Column(name = "origin_name", nullable = false, length = 255)
+    private String originName;
 
     // MySQL JSON 컬럼
     @Column(name = "parsed_json", columnDefinition = "json")

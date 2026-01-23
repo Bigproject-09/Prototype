@@ -16,11 +16,11 @@ public class NoticeReference {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reference_id")
-    private Long id;
+    private Long referenceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
-    private ProjectNotice notice;
+    private ProjectNotice noticeId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 20)

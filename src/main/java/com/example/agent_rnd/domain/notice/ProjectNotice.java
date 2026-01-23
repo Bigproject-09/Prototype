@@ -32,8 +32,8 @@ public class ProjectNotice {
     @Column(name = "author", nullable = false, length = 100)
     private String author;
 
-    @Column(name = "etc_instl_nm", nullable = false, length = 100)
-    private String etcInstlNm;
+    @Column(name = "exc_instt_nm", nullable = false, length = 100)
+    private String etcInsttNm;
 
     @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description; // ERD: NULL 허용
@@ -41,14 +41,14 @@ public class ProjectNotice {
     @Column(name = "pub_date", nullable = false, length = 50)
     private String pubDate;
 
-    @Column(name = "reqst_cl", length = 100)
-    private String reqstCl; // ERD: NULL 허용
+    @Column(name = "reqst_dt", length = 100)
+    private String reqstDt; // ERD: NULL 허용
 
-    @Column(name = "rcrt_clm", nullable = false, length = 200)
-    private String rcrtClm;
+    @Column(name = "trget_nm", nullable = false, length = 200)
+    private String trgetNm;
 
-    @Column(name = "print_lpth_nm", nullable = false, length = 500)
-    private String printLpthNm;
+    @Column(name = "print_flpth_nm", nullable = false, length = 500)
+    private String printFlpthNm;
 
     @Column(name = "print_file_nm", nullable = false, length = 200)
     private String printFileNm;
@@ -74,16 +74,16 @@ public class ProjectNotice {
 
     public void addAttachment(NoticeAttachment attachment) {
         attachments.add(attachment);
-        attachment.setNotice(this);
+        attachment.setNoticeId(this);
     }
 
     public void addChecklistItem(ChecklistItem item) {
         checklistItems.add(item);
-        item.setNotice(this);
+        item.setNoticeId(this);
     }
 
     public void addReference(NoticeReference ref) {
         references.add(ref);
-        ref.setNotice(this);
+        ref.setNoticeId(this);
     }
 }
