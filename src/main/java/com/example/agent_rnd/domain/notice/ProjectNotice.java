@@ -1,58 +1,85 @@
 package com.example.agent_rnd.domain.notice;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import com.example.agent_rnd.domain.notice.enums.NoticeStatus;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "PROJECT_NOTICES")
 @Getter
+@Setter
 @NoArgsConstructor
-@Table(name = "project_notices")
+@AllArgsConstructor
+@Builder
 public class ProjectNotice {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
     private Long id;
 
-    @Column(name = "seq")
-    private String seq;
+    @Column(name = "notice_name", nullable = false, length = 255)
+    private String noticeName;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Column(name = "organization", length = 255)
+    private String organization;
 
-    @Column(name = "link", columnDefinition = "TEXT")
+    @Column(name = "budget", length = 255)
+    private String budget;
+
+    @Column(name = "period", length = 255)
+    private String period;
+
+    @Column(name = "deadline")
+    private LocalDate deadline;
+
+    @Column(name = "summary", columnDefinition = "TEXT")
+    private String summary;
+
+    @Column(name = "url", length = 1000)
     private String url;
 
-    @Column(name = "author")
-    private String author;
-
-    // [수정] DB의 컬럼명인 excInsttNm과 정확히 일치시킵니다.
-    @Column(name = "excInsttNm")
-    private String agency;
-
-    @Lob
-    @Column(name = "description", columnDefinition = "LONGTEXT")
-    private String description;
-
-    @Column(name = "pubDate")
-    private String pubDate;
-
-    // [수정] 다른 카멜케이스 컬럼들도 안전하게 name을 명시합니다.
-    @Column(name = "reqstDt")
-    private String requestPeriod;
-
-    @Column(name = "trgetNm", columnDefinition = "TEXT")
-    private String targetName;
-
-    @Column(name = "printFlpthNm", columnDefinition = "TEXT")
-    private String filePath;
-
-    @Column(name = "printFileNm", columnDefinition = "TEXT")
-    private String fileName;
-
-    @Column(name = "hashTags", columnDefinition = "TEXT")
+    // 해시태그를 문자열로 저장하는 버전(나중에 NOTICE_TAGS 매핑으로 개선 가능)
+    @Column(name = "hash_tags", length = 500)
     private String hashTags;
 
-    @Transient
-    public String getStatus() { return "OPEN"; }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
+    @Builder.Default
+    private NoticeStatus status = NoticeStatus.ACTIVE;
+
+    // ====== relations ======
+
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<NoticeAttachment> attachments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ChecklistItem> checklistItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<NoticeReference> references = new ArrayList<>();
+
+    // ====== 편의 메서드(양방향 세팅) ======
+
+    public void addAttachment(NoticeAttachment attachment) {
+        attachments.add(attachment);
+        attachment.setNotice(this);
+    }
+
+    public void addChecklistItem(ChecklistItem item) {
+        checklistItems.add(item);
+        item.setNotice(this);
+    }
+
+    public void addReference(NoticeReference ref) {
+        references.add(ref);
+        ref.setNotice(this);
+    }
 }
