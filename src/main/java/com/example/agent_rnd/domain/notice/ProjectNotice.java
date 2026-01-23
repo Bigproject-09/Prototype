@@ -2,9 +2,7 @@ package com.example.agent_rnd.domain.notice;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.example.agent_rnd.domain.enums.NoticeStatus;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,37 +20,43 @@ public class ProjectNotice {
     @Column(name = "notice_id")
     private Long id;
 
-    @Column(name = "notice_name", nullable = false, length = 255)
-    private String noticeName;
+    @Column(name = "seq", nullable = false, length = 100)
+    private String seq;
 
-    @Column(name = "organization", length = 255)
-    private String organization;
+    @Column(name = "title", nullable = false, length = 500)
+    private String title;
 
-    @Column(name = "budget", length = 255)
-    private String budget;
+    @Column(name = "link", nullable = false, length = 1000)
+    private String link;
 
-    @Column(name = "period", length = 255)
-    private String period;
+    @Column(name = "author", nullable = false, length = 100)
+    private String author;
 
-    @Column(name = "deadline")
-    private LocalDate deadline;
+    @Column(name = "etc_instl_nm", nullable = false, length = 100)
+    private String etcInstlNm;
 
-    @Column(name = "summary", columnDefinition = "TEXT")
-    private String summary;
+    @Column(name = "description", columnDefinition = "LONGTEXT")
+    private String description; // ERD: NULL 허용
 
-    @Column(name = "url", length = 1000)
-    private String url;
+    @Column(name = "pub_date", nullable = false, length = 50)
+    private String pubDate;
 
-    // 해시태그를 문자열로 저장하는 버전(나중에 NOTICE_TAGS 매핑으로 개선 가능)
-    @Column(name = "hash_tags", length = 500)
+    @Column(name = "reqst_cl", length = 100)
+    private String reqstCl; // ERD: NULL 허용
+
+    @Column(name = "rcrt_clm", nullable = false, length = 200)
+    private String rcrtClm;
+
+    @Column(name = "print_lpth_nm", nullable = false, length = 500)
+    private String printLpthNm;
+
+    @Column(name = "print_file_nm", nullable = false, length = 200)
+    private String printFileNm;
+
+    @Column(name = "hash_tags", nullable = false, length = 500)
     private String hashTags;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 30)
-    @Builder.Default
-    private NoticeStatus status = NoticeStatus.ACTIVE;
-
-    // ====== relations ======
+    // ===== relations =====
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -66,7 +70,7 @@ public class ProjectNotice {
     @Builder.Default
     private List<NoticeReference> references = new ArrayList<>();
 
-    // ====== 편의 메서드(양방향 세팅) ======
+    // ===== 편의 메서드 =====
 
     public void addAttachment(NoticeAttachment attachment) {
         attachments.add(attachment);

@@ -26,6 +26,6 @@ public class ChecklistItem {
     @Column(name = "type", nullable = false, length = 30)
     private ChecklistType type;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, length = 500)
     private String content;
 }

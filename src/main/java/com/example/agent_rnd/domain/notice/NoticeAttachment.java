@@ -1,11 +1,14 @@
 package com.example.agent_rnd.domain.notice;
 
+import com.example.agent_rnd.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "NOTICE_ATTACHMENTS") // DB가 이렇게 되어있다면 그대로, 아니면 NOTICE_ATTACHMENTS로 수정
+@Table(name = "NOTICE_ATTACHMENTS")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,14 +25,26 @@ public class NoticeAttachment {
     @JoinColumn(name = "notice_id", nullable = false)
     private ProjectNotice notice;
 
-    @Column(name = "origin_name", nullable = false, length = 255)
-    private String fileName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "file_path", nullable = false, length = 1000)
-    private String filePath;     // 저장 키/경로(S3 key든 로컬 path든)
+    // ERD: "파일명/경로" 역할 (샘플에 경로처럼 들어가도 컬럼명은 original_name)
+    @Column(name = "original_name", nullable = false, length = 255)
+    private String originalName;
 
-    // 운영 확장(ERD에 아직 없으면 나중에 컬럼 추가)
-    // @Column(name = "mime_type", length = 100) private String mimeType;
-    // @Column(name = "file_size") private Long fileSize;
-    // @Column(name = "checksum", length = 128) private String checksum;
+    // MySQL JSON 컬럼
+    @Column(name = "parsed_json", columnDefinition = "json")
+    private String parsedJson; // ERD: NULL 허용
+
+    // WAIT, PROCESSING, DONE, FAILED (enum 안 만들고 문자열로 맞춤)
+    @Column(name = "parse_status", nullable = false, length = 20)
+    private String parseStatus;
+
+    @Column(name = "error_msg", columnDefinition = "TEXT")
+    private String errorMsg; // ERD 상 실패시에만 존재하는 게 자연스러워서 NULL 허용
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }
