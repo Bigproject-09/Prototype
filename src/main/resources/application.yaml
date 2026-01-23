@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 내 컴퓨터(로컬) DB 연결
-    url: jdbc:mysql://localhost:3306/remote_db_copy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/randi_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: aivle
 

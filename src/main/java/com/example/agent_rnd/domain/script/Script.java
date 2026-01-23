@@ -1,6 +1,5 @@
-package com.example.agent_rnd.domain.artifact;
+package com.example.agent_rnd.domain.script;
 
-import com.example.agent_rnd.domain.enums.ArtifactType;
 import com.example.agent_rnd.domain.presentation.Presentation;
 
 import jakarta.persistence.*;
@@ -14,12 +13,12 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "ARTIFACTS")
-public class Artifact {
+@Table(name = "SCRIPTS")
+public class Script {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "artifact_id")
+    @Column(name = "script_id")
     private Long id;
 
     // 발표자료와 연결 (N:1)
@@ -27,26 +26,21 @@ public class Artifact {
     @JoinColumn(name = "presentation_id", nullable = false)
     private Presentation presentation;
 
-    // Enums 패키지 사용
-    @Enumerated(EnumType.STRING)
-    @Column(name = "artifact_type", nullable = false, length = 20)
-    private ArtifactType artifactType; // PPT or SCRIPT_FILE
+    @Column(name = "page_no", nullable = false)
+    private Integer pageNo;
 
-    @Column(name = "file_url", nullable = false, length = 500)
-    private String fileUrl; // S3 URL
-
-    @Column(name = "file_name")
-    private String fileName;
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    private String content; // 대본 내용
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public Artifact(Presentation presentation, ArtifactType artifactType, String fileUrl, String fileName) {
+    public Script(Presentation presentation, Integer pageNo, String content) {
         this.presentation = presentation;
-        this.artifactType = artifactType;
-        this.fileUrl = fileUrl;
-        this.fileName = fileName;
+        this.pageNo = pageNo;
+        this.content = content;
     }
 }

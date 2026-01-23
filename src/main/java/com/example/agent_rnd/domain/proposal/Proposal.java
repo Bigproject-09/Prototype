@@ -1,46 +1,51 @@
 package com.example.agent_rnd.domain.proposal;
 
-import com.example.agent_rnd.domain.user.User;
-import com.example.agent_rnd.domain.notice.ProjectNotice;
-import com.example.agent_rnd.domain.template.ProposalTemplate;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder // [추가] 빌더 패턴 활성화
-@AllArgsConstructor(access = AccessLevel.PRIVATE) // [추가] 빌더 사용 시 필수
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "PROPOSALS")
 public class Proposal {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "proposal_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "notice_id", nullable = false)
-    private ProjectNotice projectNotice;
+    // 타 도메인 연결
+    @Column(name = "notice_id", nullable = false)
+    private Long noticeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "template_id", nullable = false)
-    private ProposalTemplate template;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(nullable = false)
     private String title;
 
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
+
     @Lob
-    @Column(name = "final_content", columnDefinition = "LONGTEXT", nullable = false)
-    private String finalContent;
+    @Column(name = "parsed_json", nullable = false, columnDefinition = "LONGTEXT")
+    private String parsedJson;
 
-    @Column(length = 20)
-    private String version;
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
-    private ProposalStatus status;
+    @Builder
+    public Proposal(Long noticeId, Long userId, String title, String fileName, String parsedJson) {
+        this.noticeId = noticeId;
+        this.userId = userId;
+        this.title = title;
+        this.fileName = fileName;
+        this.parsedJson = parsedJson;
+    }
 }
