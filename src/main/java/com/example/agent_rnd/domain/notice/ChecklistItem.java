@@ -2,7 +2,7 @@ package com.example.agent_rnd.domain.notice;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.example.agent_rnd.domain.notice.enums.ChecklistType;
+import com.example.agent_rnd.domain.enums.ChecklistType;
 
 @Entity
 @Table(name = "CHECKLISTS")

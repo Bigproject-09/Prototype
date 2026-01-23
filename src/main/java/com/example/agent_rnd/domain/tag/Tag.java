@@ -1,5 +1,6 @@
 package com.example.agent_rnd.domain.tag;
 
+import com.example.agent_rnd.domain.enums.TagCategory;
 import jakarta.persistence.*;
 
 @Entity

@@ -15,15 +15,15 @@ public class NoticeAttachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "attatchment_id")
+    @Column(name = "attachment_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
     private ProjectNotice notice;
 
-    @Column(name = "file_name", nullable = false, length = 255)
-    private String fileName;     // 사용자 표시용 이름
+    @Column(name = "origin_name", nullable = false, length = 255)
+    private String fileName;
 
     @Column(name = "file_path", nullable = false, length = 1000)
     private String filePath;     // 저장 키/경로(S3 key든 로컬 path든)

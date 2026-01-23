@@ -2,7 +2,7 @@ package com.example.agent_rnd.domain.notice;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.example.agent_rnd.domain.notice.enums.NoticeStatus;
+import com.example.agent_rnd.domain.enums.NoticeStatus;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

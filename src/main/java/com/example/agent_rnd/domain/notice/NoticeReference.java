@@ -2,7 +2,7 @@ package com.example.agent_rnd.domain.notice;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.example.agent_rnd.domain.notice.enums.ReferenceType;
+import com.example.agent_rnd.domain.enums.ReferenceType;
 
 @Entity
 @Table(name = "NOTICE_REFERENCES")

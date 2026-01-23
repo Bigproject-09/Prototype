@@ -1,7 +1,7 @@
 package com.example.agent_rnd.repository;
 
 import com.example.agent_rnd.domain.tag.Tag;
-import com.example.agent_rnd.domain.tag.TagCategory;
+import com.example.agent_rnd.domain.enums.TagCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

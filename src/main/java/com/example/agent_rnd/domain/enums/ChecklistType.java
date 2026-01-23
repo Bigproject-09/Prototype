@@ -1,4 +1,4 @@
-package com.example.agent_rnd.domain.notice.enums;
+package com.example.agent_rnd.domain.enums;
 
 public enum ChecklistType {
     QUALIFICATION, // 자격요건
