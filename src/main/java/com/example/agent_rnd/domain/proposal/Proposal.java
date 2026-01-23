@@ -32,8 +32,7 @@ public class Proposal {
     @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    @Lob
-    @Column(name = "parsed_json", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "parsed_json", nullable = false, columnDefinition = "json")
     private String parsedJson;
 
     @CreatedDate

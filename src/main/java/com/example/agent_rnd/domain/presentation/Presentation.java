@@ -2,9 +2,11 @@ package com.example.agent_rnd.domain.presentation;
 
 import com.example.agent_rnd.domain.enums.PresentationStatus;
 import com.example.agent_rnd.domain.proposal.Proposal;
-
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,39 +24,44 @@ public class Presentation {
     @Column(name = "presentation_id")
     private Long id;
 
-    // 제안서와 연결 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proposal_id", nullable = false)
     private Proposal proposal;
 
-    @Column(nullable = false)
-    private Integer version;
-
-    @Column(nullable = false)
-    private String theme;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private PresentationStatus status;
+    private PresentationStatus status; // GENERATING, COMPLETED, FAILED
+
+    @Column(name = "total_tokens")
+    private Integer totalTokens;
+
+    @Column(nullable = false)
+    private Integer version;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public Presentation(Proposal proposal, Integer version, String theme) {
+    public Presentation(Proposal proposal, Integer version) {
         this.proposal = proposal;
         this.version = version;
-        this.theme = theme;
-        this.status = PresentationStatus.GENERATING; // 기본값: 생성중
+        this.status = PresentationStatus.GENERATING; // 기본값
     }
 
-    // 상태 변경 메서드
-    public void complete() {
+    public static Presentation create(Proposal proposal, Integer version) {
+        return Presentation.builder()
+                .proposal(proposal)
+                .version(version)
+                .build();
+    }
+
+    public void completeCreation(int totalTokens) {
         this.status = PresentationStatus.COMPLETED;
+        this.totalTokens = totalTokens;
     }
 
-    public void fail() {
+    public void failCreation() {
         this.status = PresentationStatus.FAILED;
     }
 }
