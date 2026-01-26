@@ -25,7 +25,8 @@ public class UserService {
     private final CompanyTagRepository companyTagRepository;
     private final PlanRepository planRepository;
     private final BusinessVerifyClient businessVerifyClient;
-
+    private final EmailAuthService emailAuthService;
+    
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
@@ -41,6 +42,9 @@ public class UserService {
 
         if (companyRepository.existsByBusinessRegNo(bno)) {
             throw new IllegalArgumentException("이미 등록된 사업자등록번호입니다.");
+        }
+        if (!emailAuthService.isVerified(req.adminEmail())) {
+            throw new IllegalArgumentException("이메일 인증이 필요합니다.");
         }
         if (userRepository.existsByEmail(req.adminEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
