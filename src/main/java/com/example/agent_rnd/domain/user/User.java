@@ -1,10 +1,20 @@
 package com.example.agent_rnd.domain.user;
 
 import com.example.agent_rnd.domain.company.Company;
+import com.example.agent_rnd.domain.plan.Plan;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import com.example.agent_rnd.domain.enums.UserRole;
+import com.example.agent_rnd.domain.enums.UserStatus;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USERS")
 public class User {
 
@@ -17,26 +27,29 @@ public class User {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @Column(nullable = false, length = 100, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
+
+    @Column(name = "email", nullable = false, length = 255, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "is_free_used", nullable = false)
     private boolean isFreeUsed;
 
-    protected User() {}
-
-    public static User create(Company company, String email, String password) {
+    public static User createAdmin(Company company, Plan plan, String email, String encodedPassword) {
         User u = new User();
         u.company = company;
+        u.plan = plan;
         u.email = email;
-        u.password = password;
-        u.createdAt = LocalDateTime.now();
+        u.password = encodedPassword;
         u.isFreeUsed = false;
         return u;
     }

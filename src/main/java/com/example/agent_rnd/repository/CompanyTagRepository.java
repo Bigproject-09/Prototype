@@ -14,4 +14,6 @@ public interface CompanyTagRepository extends JpaRepository<CompanyTag, Long> {
     List<CompanyTag> findByTag(Tag tag);
 
     boolean existsByCompanyAndTag(Company company, Tag tag);
+
+    void deleteByCompany_CompanyId(Long companyId);
 }

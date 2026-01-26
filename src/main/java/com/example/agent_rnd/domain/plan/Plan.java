@@ -1,9 +1,14 @@
 package com.example.agent_rnd.domain.plan;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "PLANS")
 public class Plan {
 
@@ -23,6 +28,4 @@ public class Plan {
 
     @Column(name = "preview_page")
     private Integer previewPage;
-
-    protected Plan() {}
 }
