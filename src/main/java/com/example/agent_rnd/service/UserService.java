@@ -43,10 +43,10 @@ public class UserService {
         if (companyRepository.existsByBusinessRegNo(bno)) {
             throw new IllegalArgumentException("이미 등록된 사업자등록번호입니다.");
         }
-        if (!emailAuthService.isVerified(req.adminEmail())) {
+        if (!emailAuthService.isVerified(req.email())) {
             throw new IllegalArgumentException("이메일 인증이 필요합니다.");
         }
-        if (userRepository.existsByEmail(req.adminEmail())) {
+        if (userRepository.existsByEmail(req.email())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         if (req.password() == null || req.password().isBlank()) throw new IllegalArgumentException("비밀번호는 필수입니다.");
@@ -72,7 +72,7 @@ public class UserService {
         companyRepository.save(company);
 
         String encoded = passwordEncoder.encode(req.password());
-        User admin = User.createAdmin(company, plan, req.adminEmail(), encoded);
+        User admin = User.createAdmin(company, plan, req.email(), encoded);
         userRepository.save(admin);
 
         return new SignupResult(company.getCompanyId(), admin.getUserId());

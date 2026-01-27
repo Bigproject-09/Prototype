@@ -6,7 +6,7 @@ public class AuthDtos {
             String businessRegNo,
             String openDate,   // YYYYMMDD
             String ceoName,
-            String adminEmail,
+            String email,
             String password,
             String passwordConfirm,
             Integer planId
