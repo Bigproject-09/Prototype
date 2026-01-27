@@ -15,6 +15,13 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
 
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        # MySQL 8.0 이상이므로 최신 방언으로 수정 (HHH90000026 경고 해결)
+        dialect: org.hibernate.dialect.MySQLDialect
+
   # =========================
   # [필수] 대용량 파일 업로드 설정 (추가됨)
   # =========================
@@ -22,14 +29,6 @@ spring:
     multipart:
       max-file-size: 1GB       # 파일 1개당 최대 1GB
       max-request-size: 1GB    # 요청 전체 최대 1GB
-
-
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        # MySQL 8.0 이상이므로 최신 방언으로 수정 (HHH90000026 경고 해결)
-        dialect: org.hibernate.dialect.MySQLDialect
 
   # =========================
   # Redis 설정 (들여쓰기 수정됨)
@@ -54,6 +53,15 @@ spring:
           auth: true
           starttls:
             enable: true
+
+# =========================
+# 포트원 결제 설정 (여기를 꼭 채워주기) 💳
+# =========================
+payment:
+  portone:
+    api-key: "여기에_포트원_REST_API_Key를_넣으세요"
+    api-secret: "여기에_포트원_Secret_Key를_넣으세요"
+
 
 # =========================
 # JWT 설정 (🔥 이게 핵심)

@@ -1,6 +1,7 @@
 package com.example.agent_rnd.domain.user;
 
 import com.example.agent_rnd.domain.company.Company;
+import com.example.agent_rnd.domain.payment.Payment; // ✅ [추가] 결제 내역 연결
 import com.example.agent_rnd.domain.plan.Plan;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,9 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import com.example.agent_rnd.domain.enums.UserRole;
-import com.example.agent_rnd.domain.enums.UserStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -45,6 +47,11 @@ public class User {
     @Column(nullable = false)
     private UserRole role; // 0=ADMIN, 1=MEMBER
 
+    // 추가] 양방향 매핑: 유저가 결제한 내역들 (조회용)
+    // mappedBy = "user"는 Payment 클래스 안의 'private User user;' 필드명을 뜻함
+    @OneToMany(mappedBy = "user")
+    private List<Payment> payments = new ArrayList<>();
+
     public static User create(
             Company company,
             Plan plan,
@@ -60,6 +67,7 @@ public class User {
         u.role = role;
         return u;
     }
+
     public static User createAdmin(Company company, Plan plan, String email, String password) {
         User u = new User();
         u.company = company;
@@ -80,4 +88,8 @@ public class User {
         return u;
     }
 
+    // 요금제 변경 메서드 (PaymentService에서 호출함)
+    public void upgradePlan(Plan newPlan) {
+        this.plan = newPlan;
+    }
 }
