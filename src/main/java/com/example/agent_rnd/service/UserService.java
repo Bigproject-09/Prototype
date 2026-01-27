@@ -72,7 +72,7 @@ public class UserService {
         companyRepository.save(company);
 
         String encoded = passwordEncoder.encode(req.password());
-        User admin = User.createAdmin(company, plan, req.email(), encoded);
+        User admin = User.createMaster(company, plan, req.email(), encoded);
         userRepository.save(admin);
 
         return new SignupResult(company.getCompanyId(), admin.getUserId());

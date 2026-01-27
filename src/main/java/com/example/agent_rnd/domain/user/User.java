@@ -45,7 +45,7 @@ public class User {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
-    private UserRole role; // 0=ADMIN, 1=MEMBER
+    private UserRole role; // 0=MASTER, 1=ADMIN, 2=MEMBER
 
     // 추가] 양방향 매핑: 유저가 결제한 내역들 (조회용)
     // mappedBy = "user"는 Payment 클래스 안의 'private User user;' 필드명을 뜻함
@@ -65,6 +65,16 @@ public class User {
         u.email = email;
         u.password = password;
         u.role = role;
+        return u;
+    }
+
+    public static User createMaster(Company company, Plan plan, String email, String password) {
+        User u = new User();
+        u.company = company;
+        u.plan = plan;
+        u.email = email;
+        u.password = password;
+        u.role = UserRole.MASTER;
         return u;
     }
 
