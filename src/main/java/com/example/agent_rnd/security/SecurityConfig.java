@@ -1,6 +1,7 @@
 package com.example.agent_rnd.security;
 
 import com.example.agent_rnd.repository.UserRepository;
+import com.example.agent_rnd.service.LogoutService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,19 +18,22 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final LogoutService logoutService;
 
     public SecurityConfig(
             JwtTokenProvider jwtTokenProvider,
-            UserRepository userRepository
+            UserRepository userRepository,
+            LogoutService logoutService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
+        this.logoutService = logoutService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         JwtAuthenticationFilter jwtFilter =
-                new JwtAuthenticationFilter(jwtTokenProvider, userRepository);
+                new JwtAuthenticationFilter(jwtTokenProvider, userRepository, logoutService);
 
         http
                 .csrf(csrf -> csrf.disable())
@@ -44,8 +48,9 @@ public class SecurityConfig {
                                 "/error",
                                 "/favicon.ico",
                                 "/api/login",
-                                "/api/auth/**"          // ★ 회원가입/이메일인증 포함
+                                "/api/auth/**"
                         ).permitAll()
+                        // /api/logout 은 permitAll에 넣지 말기 (로그인된 토큰으로만 로그아웃)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
