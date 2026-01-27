@@ -8,7 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "NOTICE_ATTACHMENTS")
+@Table(name = "NOTICE_ATTACHMENTS") // DB가 이렇게 되어있다면 그대로, 아니면 NOTICE_ATTACHMENTS로 수정
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,7 +21,6 @@ public class NoticeAttachment {
     @Column(name = "attachment_id")
     private Long id;
 
-    // ★ mappedBy="notice" 와 맞춰서 필드명은 notice
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
     private ProjectNotice notice;

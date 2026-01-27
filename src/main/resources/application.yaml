@@ -1,8 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # 내 컴퓨터(로컬) DB 연결
-    url: jdbc:mysql://localhost:3306/randi_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/agentrnd?serverTimezone=Asia/Seoul
     username: root
     password: aivle
 
@@ -10,6 +9,7 @@ spring:
     hibernate:
       # DB와 엔티티 구조가 일치하는지 검사만 수행
       ddl-auto: validate
+
       # [중요] 자바 필드명 대소문자 그대로 DB 컬럼명을 찾게 하는 설정
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        # MySQL 8.0 이상이므로 최신 방언으로 수정
+        # MySQL 8.0 이상이므로 최신 방언으로 수정 (HHH90000026 경고 해결)
         dialect: org.hibernate.dialect.MySQLDialect
 
   # =========================
@@ -45,6 +45,12 @@ spring:
           auth: true
           starttls:
             enable: true
+
+# =========================
+# JWT 설정 (🔥 이게 핵심)
+# =========================
+jwt:
+  secret: agent-rnd-jwt-secret-key-32bytes-minimum!!
 
   # =========================
   # [필수] 대용량 파일 업로드 설정 (추가됨)
@@ -75,12 +81,13 @@ external:
   data-go:
     service-key: 17986d31ec5f9cf3a864ffc5d8cf4420667bfffb4fc4decc025b895f9d2ab2d0
     base-url: https://api.odcloud.kr/api/nts-businessman/v1
-
 # =========================
 # 이메일 인증(Redis) 정책
 # =========================
 auth:
   email:
-    code-ttl-seconds: 300      # 인증코드 유효시간(5분)
-    verified-ttl-seconds: 3600 # 인증완료 상태 유지(1시간)
-    max-attempts: 5            # 코드 검증 시도 횟수 제한
+    code-ttl-seconds: 300
+    verified-ttl-seconds: 3600
+    max-attempts: 5
+
+

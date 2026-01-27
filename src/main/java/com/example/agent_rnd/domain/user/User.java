@@ -34,23 +34,50 @@ public class User {
     @Column(name = "email", nullable = false, length = 255, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 255)
+    @Column(nullable = false, length = 255)
     private String password;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "is_free_used", nullable = false)
-    private boolean isFreeUsed;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private UserRole role; // 0=ADMIN, 1=MEMBER
 
-    public static User createAdmin(Company company, Plan plan, String email, String encodedPassword) {
+    public static User create(
+            Company company,
+            Plan plan,
+            String email,
+            String password,
+            UserRole role
+    ) {
         User u = new User();
         u.company = company;
         u.plan = plan;
         u.email = email;
-        u.password = encodedPassword;
-        u.isFreeUsed = false;
+        u.password = password;
+        u.role = role;
         return u;
     }
+    public static User createAdmin(Company company, Plan plan, String email, String password) {
+        User u = new User();
+        u.company = company;
+        u.plan = plan;
+        u.email = email;
+        u.password = password;
+        u.role = UserRole.ADMIN;
+        return u;
+    }
+
+    public static User createMember(Company company, Plan plan, String email, String password) {
+        User u = new User();
+        u.company = company;
+        u.plan = plan;
+        u.email = email;
+        u.password = password;
+        u.role = UserRole.MEMBER;
+        return u;
+    }
+
 }
