@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserIdAndCompany_CompanyId(Long userId, Long companyId);
 
     // =========================
-    // ✅ 회사 유저 목록(필터/검색)용 Projection
+    // 회사 유저 목록(필터/검색)용 Projection
     // =========================
     interface CompanyUserView {
         Long getUserId();
@@ -45,7 +45,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
         String getPlanName();
         BigDecimal getPlanPrice();
         boolean getIsDownloadable();
-        Integer getPreviewPage();
 
         LocalDateTime getCreatedAt();
     }

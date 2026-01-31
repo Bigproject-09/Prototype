@@ -28,19 +28,8 @@ public class Plan {
     @Column(name = "is_downloadable", nullable = false)
     private Boolean isDownloadable;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "plan_type", nullable = false, length = 20)
-    private PlanType planType;
+    // [추가] DB에 새로 만든 컬럼과 연결
+    @Column(name = "plan_type", length = 20)
+    private String planType;
 
-    /**
-     * ✅ DB 컬럼이 없는 파생 값.
-     * 기존 API 응답에서 previewPage를 유지해야 할 때 사용.
-     * - FREE: 미리보기 3페이지
-     * - PAID: 제한 없음(null)
-     */
-    @Transient
-    public Integer getPreviewPage() {
-        if (planType == null) return null;
-        return (planType == PlanType.FREE) ? 3 : null;
-    }
 }

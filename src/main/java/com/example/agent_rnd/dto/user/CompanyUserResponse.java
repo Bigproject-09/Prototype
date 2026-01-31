@@ -20,7 +20,6 @@ public record CompanyUserResponse(
         String planName,
         BigDecimal planPrice,
         boolean isDownloadable,
-        Integer previewPage,
 
         LocalDateTime createdAt
 ) {}

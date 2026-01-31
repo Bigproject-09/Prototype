@@ -47,7 +47,6 @@ public class UserManagementController {
                 me.getPlan().getPlanName(),
                 me.getPlan().getPrice(),
                 me.getPlan().getIsDownloadable(),
-                me.getPlan().getPreviewPage(),
                 parentId,
                 parentEmail,
                 me.getCreatedAt()
@@ -101,7 +100,6 @@ public class UserManagementController {
                 v.getPlanName(),
                 v.getPlanPrice(),
                 v.getIsDownloadable(),
-                v.getPreviewPage(),
                 v.getCreatedAt()
         )).toList();
 

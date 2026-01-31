@@ -17,7 +17,6 @@ public record UserMeResponse(
         String planName,
         BigDecimal planPrice,
         boolean isDownloadable,
-        Integer previewPage,
 
         Long parentId,
         String parentEmail,
