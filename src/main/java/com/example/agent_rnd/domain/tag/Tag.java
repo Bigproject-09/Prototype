@@ -2,9 +2,14 @@ package com.example.agent_rnd.domain.tag;
 
 import com.example.agent_rnd.domain.enums.TagCategory;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "TAGS")
+@Table(name = "tags")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Tag {
 
     @Id
@@ -13,18 +18,9 @@ public class Tag {
     private Long tagId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column(name = "category", nullable = false, length = 50)
     private TagCategory category;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
-
-    protected Tag() {}
-
-    public static Tag create(TagCategory category, String name) {
-        Tag t = new Tag();
-        t.category = category;
-        t.name = name;
-        return t;
-    }
 }

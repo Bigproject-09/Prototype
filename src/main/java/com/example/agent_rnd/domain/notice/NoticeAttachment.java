@@ -2,47 +2,72 @@ package com.example.agent_rnd.domain.notice;
 
 import com.example.agent_rnd.domain.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "NOTICE_ATTACHMENTS") // DB가 이렇게 되어있다면 그대로, 아니면 NOTICE_ATTACHMENTS로 수정
+@Table(name = "notice_attachments")
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class NoticeAttachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attachment_id")
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "notice_id", nullable = false)
-    private ProjectNotice notice;
+    private Long attachmentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // ERD: original_name(또는 origin_name) — 지금 DB가 origin_name이면 그대로 유지
-    @Column(name = "origin_name", nullable = false, length = 255)
-    private String originName;
+    /**
+     * notice_attachments.file_id 는 UNIQUE 제약.
+     * 파일 1개당 첨부(파싱) 결과 1개.
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id", nullable = false, unique = true)
+    @Setter(AccessLevel.PACKAGE)
+    private NoticeFile file;
 
     @Column(name = "parsed_json", columnDefinition = "json")
-    private String parsedJson; // NULL 허용
+    private String parsedJson;
 
     @Column(name = "parse_status", nullable = false, length = 20)
     private String parseStatus; // WAIT, PROCESSING, DONE, FAILED
 
     @Column(name = "error_msg", columnDefinition = "TEXT")
-    private String errorMsg; // NULL 허용
+    private String errorMsg;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public static NoticeAttachment create(User user, NoticeFile file, String parseStatus) {
+        NoticeAttachment a = NoticeAttachment.builder()
+                .user(user)
+                .file(file)
+                .parseStatus(parseStatus)
+                .build();
+        return a;
+    }
+
+    public void markDone(String parsedJson) {
+        this.parseStatus = "DONE";
+        this.parsedJson = parsedJson;
+        this.errorMsg = null;
+    }
+
+    public void markFailed(String errorMsg) {
+        this.parseStatus = "FAILED";
+        this.errorMsg = errorMsg;
+    }
 }

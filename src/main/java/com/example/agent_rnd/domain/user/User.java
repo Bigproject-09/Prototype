@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "USERS")
 public class User {
 
     @Id
@@ -33,23 +33,22 @@ public class User {
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
-    @Column(name = "email", nullable = false, length = 100) // DB varchar(100)
+    @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(nullable = false)
-    private UserRole role; // 0=MASTER, 1=ADMIN, 2=MEMBER
+    @Column(name = "role", nullable = false)
+    private UserRole role;
 
-    // self join
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id") // nullable
+    @JoinColumn(name = "parent_id")
     private User parent;
 
     @OneToMany(mappedBy = "parent")
@@ -58,31 +57,31 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Payment> payments = new ArrayList<>();
 
-    // ===== factory =====
-    private static User base(Company company, Plan plan, String email, String password, UserRole role, User parent) {
-        User u = new User();
-        u.company = company;
-        u.plan = plan;
-        u.email = email;
-        u.password = password;
-        u.role = role;
+    private User(Company company, Plan plan, String email, String password, UserRole role) {
+        this.company = company;
+        this.plan = plan;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public static User createMaster(Company company, Plan plan, String email, String password) {
+        return new User(company, plan, email, password, UserRole.MASTER);
+    }
+
+    public static User createAdmin(Company company, Plan plan, String email, String password, User parent) {
+        User u = new User(company, plan, email, password, UserRole.ADMIN);
         u.parent = parent;
         return u;
     }
 
-    public static User createMaster(Company company, Plan plan, String email, String password) {
-        return base(company, plan, email, password, UserRole.MASTER, null);
+    public static User createMember(Company company, Plan plan, String email, String password, User parent) {
+        User u = new User(company, plan, email, password, UserRole.MEMBER);
+        u.parent = parent;
+        return u;
     }
 
-    public static User createAdmin(Company company, Plan plan, String email, String password, User masterParent) {
-        return base(company, plan, email, password, UserRole.ADMIN, masterParent);
-    }
-
-    public static User createMember(Company company, Plan plan, String email, String password, User adminParent) {
-        return base(company, plan, email, password, UserRole.MEMBER, adminParent);
-    }
-
-    public void upgradePlan(Plan newPlan) {
-        this.plan = newPlan;
+    public void changePlan(Plan plan) {
+        this.plan = plan;
     }
 }

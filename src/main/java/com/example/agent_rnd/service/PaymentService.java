@@ -82,9 +82,9 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         // 5. 유저 등급 UP (비즈니스 로직)
-        user.upgradePlan(plan);
+        user.changePlan(plan);
 
-        return payment.getId();
+        return payment.getPaymentId();
     }
 
     // 포트원 API 호출 헬퍼

@@ -5,23 +5,23 @@ import com.example.agent_rnd.domain.plan.Plan;
 import com.example.agent_rnd.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "payments")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "PAYMENTS")
+@AllArgsConstructor
+@Builder
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
-    private Long id;
+    private Long paymentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -37,28 +37,17 @@ public class Payment {
     @Column(name = "merchant_uid", nullable = false, length = 100)
     private String merchantUid;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "status", nullable = false, length = 20)
     private PaymentStatus status;
 
-    @Column(name = "fail_reason")
+    @Column(name = "fail_reason", length = 255)
     private String failReason;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Builder
-    public Payment(User user, Plan plan, String impUid, String merchantUid, BigDecimal amount, PaymentStatus status, String failReason) {
-        this.user = user;
-        this.plan = plan;
-        this.impUid = impUid;
-        this.merchantUid = merchantUid;
-        this.amount = amount;
-        this.status = status;
-        this.failReason = failReason;
-    }
 }

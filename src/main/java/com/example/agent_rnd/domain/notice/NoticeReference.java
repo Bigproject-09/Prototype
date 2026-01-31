@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "NOTICE_REFERENCES")
+@Table(name = "notice_references")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +16,7 @@ public class NoticeReference {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reference_id")
-    private Long id;
+    private Long referenceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)

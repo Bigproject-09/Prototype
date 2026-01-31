@@ -71,7 +71,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             u.plan.planName as planName,
             u.plan.price as planPrice,
             u.plan.isDownloadable as isDownloadable,
-            u.plan.previewPage as previewPage,
+            case when u.plan.planType = com.example.agent_rnd.domain.enums.PlanType.FREE then 3 else null end as previewPage,
 
             u.createdAt as createdAt
         from User u

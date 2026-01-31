@@ -46,12 +46,25 @@ public class UserManagementController {
                 me.getPlan().getPlanId(),
                 me.getPlan().getPlanName(),
                 me.getPlan().getPrice(),
-                me.getPlan().isDownloadable(),
+                me.getPlan().getIsDownloadable(),
                 me.getPlan().getPreviewPage(),
                 parentId,
                 parentEmail,
                 me.getCreatedAt()
         ));
+    }
+
+    // =========================
+    // 1-1) 내 계정 삭제 (토큰 필수)
+    // DELETE /api/users/me
+    // - MEMBER/ADMIN/MASTER 모두 가능
+    // - 서비스에서 본인 삭제만 허용되도록 처리
+    // =========================
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMe(Authentication authentication) {
+        Long myUserId = (Long) authentication.getPrincipal();
+        userService.deleteUserByManager(myUserId, myUserId);
+        return ResponseEntity.noContent().build();
     }
 
     // =========================
@@ -171,7 +184,7 @@ public class UserManagementController {
             throw new AccessDeniedException("ADMIN은 자기 아래 멤버만 조회할 수 있습니다.");
         }
 
-        // MASTER가 호출하는 경우: "자기 라인"만 허용(원치 않으면 이 블록 삭제)
+        // MASTER가 호출하는 경우: 자기 라인만 허용
         if (me.getRole() == UserRole.MASTER) {
             if (admin.getParent() == null || !Objects.equals(admin.getParent().getUserId(), me.getUserId())) {
                 throw new AccessDeniedException("이 MASTER 소속 ADMIN이 아닙니다.");
@@ -181,7 +194,6 @@ public class UserManagementController {
         Long companyId = me.getCompany().getCompanyId();
         var members = userRepository.findChildrenInCompany(companyId, adminId);
 
-        // 가볍게 Map으로 반환(DTO 더 만들기 귀찮으면 이게 제일 빠름)
         return ResponseEntity.ok(
                 members.stream().map(v -> java.util.Map.of(
                         "userId", v.getUserId(),
@@ -196,8 +208,11 @@ public class UserManagementController {
     }
 
     // =========================
-    // 5) 유저 삭제 (MASTER/ADMIN)
+    // 5) 유저 삭제 (토큰 필수)
     // DELETE /api/users/{targetUserId}
+    // - MEMBER: 본인만 (서비스에서 강제)
+    // - ADMIN: 본인 + 본인 소속 MEMBER
+    // - MASTER: 본인 + 본인 소속 ADMIN + 그 아래 MEMBER
     // =========================
     @DeleteMapping("/{targetUserId}")
     public ResponseEntity<Void> deleteUser(

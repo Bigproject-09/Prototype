@@ -2,9 +2,14 @@ package com.example.agent_rnd.domain.company;
 
 import com.example.agent_rnd.domain.tag.Tag;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "COMPANY_TAGS")
+@Table(name = "company_tags")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class CompanyTag {
 
     @Id
@@ -19,13 +24,4 @@ public class CompanyTag {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", nullable = false)
     private Tag tag;
-
-    protected CompanyTag() {}
-
-    public static CompanyTag create(Company company, Tag tag) {
-        CompanyTag ct = new CompanyTag();
-        ct.company = company;
-        ct.tag = tag;
-        return ct;
-    }
 }
