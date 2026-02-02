@@ -60,9 +60,6 @@ public class Company {
     @Column(name = "core_competency", columnDefinition = "json")
     private String coreCompetency;
 
-    @Column(name = "team_strength", columnDefinition = "json")
-    private String teamStrength;
-
     private Company(String companyName,
                     String businessRegNo,
                     ContractStatus contractStatus,
@@ -94,14 +91,12 @@ public class Company {
                               Long employees,
                               String financialSummaryJson,
                               String historyJson,
-                              String coreCompetencyJson,
-                              String teamStrengthJson) {
+                              String coreCompetencyJson) {
         this.address = address;
         this.industry = industry;
         this.employees = employees;
         this.financialSummary = financialSummaryJson;
         this.history = historyJson;
         this.coreCompetency = coreCompetencyJson;
-        this.teamStrength = teamStrengthJson;
     }
 }

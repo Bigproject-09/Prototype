@@ -84,4 +84,8 @@ public class User {
     public void changePlan(Plan plan) {
         this.plan = plan;
     }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
