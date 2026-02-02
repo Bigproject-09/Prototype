@@ -29,7 +29,8 @@ public class Plan {
     private Boolean isDownloadable;
 
     // [추가] DB에 새로 만든 컬럼과 연결
-    @Column(name = "plan_type", length = 20)
-    private String planType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "plan_type", nullable = false, length = 20)
+    private PlanType planType;
 
 }
