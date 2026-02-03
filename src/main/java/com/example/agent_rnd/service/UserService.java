@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -47,12 +48,12 @@ public class UserService {
     public SignupResult companySignupAndCreateMaster(AuthDtos.CompanySignupRequest req) {
 
         String bno = normalizeDigits(req.businessRegNo());
-        String startDt = normalizeDigits(req.openDate());
-        String pnm = (req.ceoName() == null) ? "" : req.ceoName().trim();
+        String openDtDigits = normalizeDigits(req.openDate());   // YYYYMMDD
+        String ceoName = (req.ceoName() == null) ? "" : req.ceoName().trim();
 
         if (bno.length() != 10) throw new IllegalArgumentException("사업자등록번호는 숫자 10자리여야 합니다.");
-        if (startDt.length() != 8) throw new IllegalArgumentException("개업일자는 YYYYMMDD 형식이어야 합니다.");
-        if (pnm.isBlank()) throw new IllegalArgumentException("대표자명은 필수입니다.");
+        if (openDtDigits.length() != 8) throw new IllegalArgumentException("개업일자는 YYYYMMDD 형식이어야 합니다.");
+        if (ceoName.isBlank()) throw new IllegalArgumentException("대표자명은 필수입니다.");
 
         String email = (req.email() == null) ? "" : req.email().trim().toLowerCase();
         if (email.isBlank()) throw new IllegalArgumentException("이메일은 필수입니다.");
@@ -70,7 +71,7 @@ public class UserService {
         if (req.password() == null || req.password().isBlank()) throw new IllegalArgumentException("비밀번호는 필수입니다.");
         if (!req.password().equals(req.passwordConfirm())) throw new IllegalArgumentException("비밀번호 확인이 일치하지 않습니다.");
 
-        var verifyRes = businessVerifyClient.validate(bno, startDt, pnm);
+        var verifyRes = businessVerifyClient.validate(bno, openDtDigits, ceoName);
         if (verifyRes == null || verifyRes.data() == null || verifyRes.data().isEmpty()) {
             throw new IllegalArgumentException("사업자 진위확인 응답이 비정상입니다.");
         }
@@ -79,7 +80,6 @@ public class UserService {
             throw new IllegalArgumentException("사업자 진위확인 실패: " + item.valid_msg());
         }
 
-        // tax_type_cd 는 validate 응답 status() 안에 존재
         String taxTypeCd = (item.status() == null) ? null : item.status().tax_type_cd();
         UserEntityType userEntityType = UserEntityType.fromTaxTypeCd(taxTypeCd);
 
@@ -90,7 +90,23 @@ public class UserService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime end = now.plusYears(1);
 
-        Company company = Company.create(req.companyName(), bno, now, end, userEntityType);
+        // ✅ 개업일 YYYYMMDD -> LocalDate
+        LocalDate openDate = LocalDate.of(
+                Integer.parseInt(openDtDigits.substring(0, 4)),
+                Integer.parseInt(openDtDigits.substring(4, 6)),
+                Integer.parseInt(openDtDigits.substring(6, 8))
+        );
+
+        // ✅ ceoName/openDate까지 회사에 저장
+        Company company = Company.create(
+                req.companyName(),
+                ceoName,
+                openDate,
+                bno,
+                now,
+                end,
+                userEntityType
+        );
         companyRepository.save(company);
 
         String encoded = passwordEncoder.encode(req.password());
@@ -101,7 +117,7 @@ public class UserService {
     }
 
     // =========================
-    // ✅ 권한별 유저 삭제 (핵심)
+    // 권한별 유저 삭제 (핵심)
     // - MEMBER: 본인만
     // - ADMIN : 본인 + 본인 소속 MEMBER
     // - MASTER: 본인 + 본인 소속 ADMIN + 그 아래 MEMBER
