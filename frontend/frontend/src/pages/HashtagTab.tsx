@@ -15,11 +15,12 @@ type NoticeItem = {
 type Props = {
   items: NoticeItem[];
   onApply: (id: number) => void;
+  onViewNotice: (item: NoticeItem) => void;  // ✅ 추가
 };
 
 const POPULAR_LIMIT = 12;
 
-const HashtagTab: React.FC<Props> = ({ items, onApply }) => {
+const HashtagTab: React.FC<Props> = ({ items, onApply, onViewNotice }) => {  // ✅ 추가
   /* =========================
      해시태그 빈도 계산
   ========================= */
@@ -138,7 +139,10 @@ const HashtagTab: React.FC<Props> = ({ items, onApply }) => {
           filteredNotices.map((it) => (
             <ResultRow key={it.id}>
               <div>
-                <ResultTitle>{it.title}</ResultTitle>
+                {/* ✅ 클릭 가능하게 수정 */}
+                <ResultTitle onClick={() => onViewNotice(it)}>
+                  {it.title}
+                </ResultTitle>
                 <Meta>
                   {it.org ?? "-"} · {it.period ?? "-"} · {it.dday}
                 </Meta>
@@ -305,6 +309,12 @@ const ResultTitle = styled.div`
   font-weight: 700;
   color: #111827;
   margin-bottom: 6px;
+  cursor: pointer;  // ✅ 추가
+
+  &:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
 `;
 
 const Meta = styled.div`

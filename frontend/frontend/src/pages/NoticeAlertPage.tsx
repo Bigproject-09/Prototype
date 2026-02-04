@@ -23,7 +23,7 @@ type NoticeItem = {
   org?: string;
   period?: string;
   summary?: string;
-  hashtags?: string[];  // ✅ 추가
+  hashtags?: string[];
 };
 
 const FAV_KEY = "bb_notice_favs_v1";
@@ -55,19 +55,16 @@ const saveFavIds = (ids: number[]) => {
 const calcDday = (endDate?: string) => {
   if (!endDate) return "-";
 
-  // "예산 소진시까지", "상시모집" 등 날짜가 아닌 텍스트는 그대로 반환
   if (!/\d{4}/.test(endDate)) {
     return endDate;
   }
 
-  // 신청기간 형식이 "시작일 ~ 종료일"인 경우 종료일 추출
   let dateStr = endDate;
   if (endDate.includes("~")) {
     const parts = endDate.split("~");
     dateStr = parts[parts.length - 1].trim();
   }
 
-  // ⭐ YYYYMMDD 형식을 YYYY-MM-DD로 변환
   if (/^\d{8}$/.test(dateStr)) {
     dateStr = `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`;
   }
@@ -95,7 +92,6 @@ const calcDday = (endDate?: string) => {
   }
 };
 
-// 페이지네이션 번호 계산 함수
 const getPageNumbers = (currentPage: number, totalPages: number): (number | string)[] => {
   if (totalPages <= 10) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -160,8 +156,6 @@ const NoticeAlertPage: React.FC = () => {
           score: n.score ?? 0,
           isRead: false,
           dday: calcDday(n.reqstDt),
-
-          // ✅ 여기 추가
           hashtags: n.hashtags ?? [],
           org: n.excInsttNm ?? "-",
           period: n.reqstDt ?? "-",
@@ -213,7 +207,6 @@ const NoticeAlertPage: React.FC = () => {
       const res = await fetch(`/api/notices/${notice.id}`);
       const d = await res.json();
 
-      // HTML 태그 제거 함수
       const stripHtml = (html: string) => {
         if (!html) return "-";
         const tmp = document.createElement("DIV");
@@ -221,7 +214,6 @@ const NoticeAlertPage: React.FC = () => {
         return tmp.textContent || tmp.innerText || "-";
       };
 
-      // ✅ 새로운 파일 구조 처리
       const attachFiles = (d.files || []).map((file: any) => ({
         fileId: file.fileId,
         fileName: file.fileName,
@@ -236,7 +228,7 @@ const NoticeAlertPage: React.FC = () => {
         url: d.link || "-",
         summary: stripHtml(d.description),
         attachFiles: attachFiles,
-        hashtags: d.hashtags || [],  // ✅ 해시태그 추가
+        hashtags: d.hashtags || [],
       });
 
       setItems((prev) =>
@@ -270,11 +262,9 @@ const NoticeAlertPage: React.FC = () => {
     setFilterText("");
   };
 
-  // ✅ 파일 다운로드 핸들러 (새 API 경로)
   const handleFileDownload = (noticeId: number, fileId: number, fileName: string) => {
     const downloadUrl = `/api/notices/${noticeId}/files/${fileId}/download`;
 
-    // 새 창으로 다운로드
     const link = document.createElement('a');
     link.href = downloadUrl;
     link.download = fileName;
@@ -310,6 +300,13 @@ const NoticeAlertPage: React.FC = () => {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const pageNumbers = getPageNumbers(page, totalPages);
 
+  // ✅ 제목 텍스트 동적 변경
+  const getTitleText = () => {
+    if (tab === "HASHTAG") return "해시태그";
+    if (tab === "FAV") return "찜";
+    return "공고 목록";
+  };
+
   /* =========================
      JSX
   ========================= */
@@ -329,9 +326,9 @@ const NoticeAlertPage: React.FC = () => {
         </Side>
 
         <Main>
-          <Title>공고 목록</Title>
+          {/* ✅ 동적 제목 */}
+          <Title>{getTitleText()}</Title>
 
-          {/* 필터 섹션 */}
           {tab !== "HASHTAG" && (
             <Section>
               <FilterRow>
@@ -374,16 +371,14 @@ const NoticeAlertPage: React.FC = () => {
             </Section>
           )}
 
-
-          {/* 공고 목록 섹션 */}
           {tab === "HASHTAG" ? (
             <HashtagTab
               items={items}
               onApply={handleApply}
+              onViewNotice={openNotice}  // ✅ 추가
             />
           ) : (
             <Section>
-              {/* 헤더 */}
               <HeaderRow>
                 <div>공고 제목</div>
                 <Center>기한</Center>
@@ -393,7 +388,6 @@ const NoticeAlertPage: React.FC = () => {
                 </ActionHeader>
               </HeaderRow>
 
-              {/* 목록 */}
               {pagedItems.length > 0 ? (
                 pagedItems.map((it) => {
                   const isFav = favIds.includes(it.id);
@@ -423,7 +417,6 @@ const NoticeAlertPage: React.FC = () => {
                 <Empty>조건에 맞는 공고가 없습니다.</Empty>
               )}
 
-              {/* 페이지네이션 */}
               {totalPages > 1 && (
                 <Pagination>
                   <PageBtn
@@ -498,7 +491,6 @@ const NoticeAlertPage: React.FC = () => {
                 </div>
               </React.Fragment>
 
-              {/* ✅ 해시태그 표시 */}
               {selected.hashtags && selected.hashtags.length > 0 && (
                 <React.Fragment key="hashtags">
                   <div className="label">해시태그</div>
@@ -510,7 +502,6 @@ const NoticeAlertPage: React.FC = () => {
                 </React.Fragment>
               )}
 
-              {/* ✅ 새로운 파일 다운로드 구조 */}
               <React.Fragment key="attachments">
                 <div className="label">첨부파일 다운로드</div>
                 <div>
@@ -550,10 +541,7 @@ const NoticeAlertPage: React.FC = () => {
 
 export default NoticeAlertPage;
 
-/* =========================
-   styled-components
-========================= */
-
+/* styled-components는 동일 */
 const Shell = styled.div`
   width: 100%;
   height: 100vh;
@@ -979,7 +967,6 @@ const AttachFileButton = styled.button`
   }
 `;
 
-// ✅ 해시태그 스타일 추가
 const HashtagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
